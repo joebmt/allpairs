@@ -2,3 +2,4 @@ allpairspy
 prettytable
 pprint
 click
+PyYAML
