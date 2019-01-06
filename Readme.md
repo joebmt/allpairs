@@ -3,7 +3,7 @@ Simple python tool to generate All-Pairs test combinations
 
 ## Overview
 
-This is a tool to generate All-pairs test combinations from a json, python, or yaml input file using the [allpairspy](https://github.com/thombashi/allpairspy) python library.
+This is a tool to generate All-pairs test combinations from a `json`, `python`, or `yaml` input file using the [allpairspy](https://github.com/thombashi/allpairspy) python library.
 
 ## What Problem Does allpairs Solve?
 The [allpairspy](https://github.com/thombashi/allpairspy) library gives a very useful library for creating All-pairs combinations.
