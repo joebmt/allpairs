@@ -1,4 +1,4 @@
-# allpairs - Functional Test Command Program to generate All-Pair test combinations
+# allpairs - Generate All-Pair test combinations
 Simple python tool to generate All-Pairs test combinations
 
 ## Overview
