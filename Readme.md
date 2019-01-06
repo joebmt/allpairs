@@ -18,7 +18,7 @@ See these links for an overview and information about All-Pairs testing:
 - [Wikipedia All-pairs](https://en.wikipedia.org/wiki/All-pairs_testing)
 - [Microsoft All-pairs Theory and Discussion](https://www.stickyminds.com/sites/default/files/presentation/file/2013/08STRER_T19.pdf)
 - [Simple All-pairs How To Example](https://www.softwaretestinghelp.com/what-is-pairwise-testing)
-- [All-pairs Reference Site] (http://www.pairwise.org/tools.asp)
+- [All-pairs Reference Site](http://www.pairwise.org/tools.asp)
 - [allpairspy Library used by allpairs utility](https://github.com/thombashi/allpairspy)
 
 ## Getting Started
