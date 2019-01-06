@@ -11,13 +11,14 @@ This program extends the library by creating a command line utility to use the l
 
 ## Description
 
-All-Pairs testing is a test technique for reducing test combinations.  
-See these links for an overview of All-Pairs testing:
+All-Pairs testing is a test technique for reducing test combinations.  It reduces test combinations by testing pairs of attributes/features instead of all combinations of features.  This allows test organizations to reduce cost, time, and man hours.  The effectiveness of the technique is discussed in the links below.  Used effectively, the technique can increase code coverage and find a higher percentage of defects than random testing. 
+
+See these links for an overview and information about All-Pairs testing:
 
 https://en.wikipedia.org/wiki/All-pairs_testing
 https://www.stickyminds.com/sites/default/files/presentation/file/2013/08STRER_T19.pdf
 https://www.softwaretestinghelp.com/what-is-pairwise-testing/
-
+http://www.pairwise.org/tools.asp
 
 ## Getting Started
 
@@ -47,6 +48,135 @@ You can install the allpairs program to /usr/local/bin/allpairs:
 
 ```
 make install_allpairs
+```
+
+### All Pairs Setup and Execution Procedure
+
+Follow the 3 steps below to setup a input datafile and execute these labels and parameters specified with the allpairs tool.
+
+### Step 1: Run allpairs --examples to see the input syntax in python, json, or yml format
+
+Run allpairs --examples to see examples of data file format in each of the 3 formats.
+There are also examples in the ./data directory included with the distribution of the the 3 formats.
+
+```
+joe@joemac:[allpairs] allpairs --examples
+=== Python Input Data ===
+labels = \
+['Year', 'Colors', 'Car']
+parameters = \
+[['2015', '2016', '2017', '2018'],
+ ['Red', 'Blue', 'Green', 'Gray', 'Brown'],
+ ['Honda', 'Toyota', 'Ford']]
+
+=== JSON Input Data ===
+{
+  "labels": [
+    "Year",
+    "Colors",
+    "Car"
+  ],
+  "parameters": [
+    [
+      "2015",
+      "2016",
+      "2017",
+      "2018"
+    ],
+    [
+      "Red",
+      "Blue",
+      "Green",
+      "Gray",
+      "Brown"
+    ],
+    [
+      "Honda",
+      "Toyota",
+      "Ford"
+    ]
+  ]
+}
+
+=== YML Input Data: Style 1 ===
+---
+labels:
+- Year
+- Colors
+- Car
+parameters:
+- - '2015'
+  - '2016'
+  - '2017'
+  - '2018'
+- - Red
+  - Blue
+  - Green
+  - Gray
+  - Brown
+- - Honda
+  - Toyota
+  - Ford
+
+
+=== YML Input Data: Style 2 ===
+--- {labels: [Year, Colors, Car], parameters: [['2015', '2016', '2017', '2018'], [
+      Red, Blue, Green, Gray, Brown], [Honda, Toyota, Ford]]}
+```
+
+### Step 2: Create a data file in python, json, or yml format specifiying the labels and parameters
+
+Use the information in step 1 to create data file in one of the 3 formats.
+You will need to specify 2 variables inside the input files: *labels* and *parameters*
+See the ./data/ap_datafile\* for examples of the syntax.
+The example below is for a python data file.
+
+```
+vi ./data/ap_datafile.py
+
+# ---
+# ap_datafile.py - python datafile to use as allpairs input to generate allpairs combinations
+# ---
+labels = \
+['Year', 'Colors', 'Car']
+parameters = \
+[['2015', '2016', '2017', '2018'],
+ ['Red', 'Blue', 'Green', 'Gray', 'Brown'],
+ ['Honda', 'Toyota', 'Ford']]
+```
+
+### Step 3: Generate an allpairs csv file or text table of the pairwise combinations using your datafile as input
+
+You can install the allpairs program to /usr/local/bin/allpairs:
+
+```
+allpairs --csv ./data/ap_datafile.py
+
+Output:
+
+joe@joemac:[allpairs] allpairs --csv_out ./data/ap_datafile.py > ap.csv
+
+0,Year,Colors,Car
+1,2015,Red,Honda
+2,2016,Blue,Honda
+3,2017,Green,Honda
+4,2018,Gray,Honda
+5,2018,Brown,Toyota
+6,2017,Brown,Ford
+7,2016,Red,Ford
+8,2015,Gray,Ford
+9,2015,Green,Toyota
+10,2016,Green,Ford
+11,2017,Blue,Toyota
+12,2018,Blue,Ford
+13,2016,Gray,Toyota
+14,2018,Red,Toyota
+15,2017,Red,Toyota
+16,2015,Brown,Honda
+17,2015,Blue,Toyota
+18,2017,Gray,Toyota
+19,2018,Green,Toyota
+20,2016,Brown,Toyota
 ```
 
 ## Framework Files
