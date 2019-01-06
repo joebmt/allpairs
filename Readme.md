@@ -11,7 +11,9 @@ This program extends the library by creating a command line utility called `allp
 
 ## Description
 
-All-Pairs testing is a test technique for reducing test combinations.  It reduces test combinations by testing pairs of attributes/features instead of all combinations of features.  This allows test organizations to reduce cost, time, and man hours.  The effectiveness of the technique is discussed in the links below.  Used effectively, the technique can increase code coverage and find a higher percentage of defects than other test techniques. 
+All-Pairs testing is a functional test technique for reducing test combinations.  It reduces test combinations by testing pairs of attributes/features instead of all combinations of features.  This allows test organizations to reduce cost, time, and man hours.  The effectiveness of the technique is discussed in the links below.  Used effectively, the technique can increase code coverage and find a higher percentage of defects than other test techniques. 
+
+For example, in page 24 of [Microsoft All-pairs Theory and Discussion](https://www.stickyminds.com/sites/default/files/presentation/file/2013/08STRER_T19.pdf), allpairs found 98 percent of all bugs seeded an 5 applications.  On page 26, 29 pairwise tests gave 90% code block coverage for the `sort` command.  
 
 See these links for an overview and information about All-Pairs testing:
 
@@ -20,6 +22,8 @@ See these links for an overview and information about All-Pairs testing:
 - [Simple All-pairs How To Example](https://www.softwaretestinghelp.com/what-is-pairwise-testing)
 - [All-pairs Reference Site](http://www.pairwise.org/tools.asp)
 - [allpairspy Library used by allpairs utility](https://github.com/thombashi/allpairspy)
+
+See the section below how allpairs generates 172 test cases to cover 10 billion test combinations as an example of the reduction in test cases for a simple 10 by 10 combination table of parameters.
 
 ## Getting Started
 
@@ -294,7 +298,213 @@ Options:
   -v, --verbose   Print Out Verbose Output
   -h, --help      This usage message
 ```
+## All-Pairs Test Case Reduction Example
 
+Here is a simple example of how test combinations can be reduced by reducing all combinations using allpairs.
+The file data/ap_datafile_v2.py has a 10 rows (features) by 10 possible values for each of the features.
+To exhaustively test all combinations, you would need to create 10 billion tests.  With All-pairs you would only need 172 to cover all pairwise combinations.
+
+```
+All Combinations: 10,000,000,000 [10, 10, 10, 10, 10, 10, 10, 10, 10, 10] (ten billion combination tests)
+    vs
+All Pairs:             172
+
+allpairs -v data/ap_datafile_v2.py
+Note: Processing python datafile: data/ap_datafile_v2.py
+
+labels = \
+['col1', 'col2', 'col3', 'col4', 'col5', 'col6', 'col7', 'col8', 'col9', 'col10']
+parameters = \
+[['r1c1', 'r1c2', 'r1c3', 'r1c4', 'r1c5', 'r1c6', 'r1c7', 'r1c8', 'r1c9', 'r1c10'],
+ ['r2c1', 'r2c2', 'r2c3', 'r2c4', 'r2c5', 'r2c6', 'r2c7', 'r2c8', 'r2c9', 'r2c10'],
+ ['r3c1', 'r3c2', 'r3c3', 'r3c4', 'r3c5', 'r3c6', 'r3c7', 'r3c8', 'r3c9', 'r3c10'],
+ ['r4c1', 'r4c2', 'r4c3', 'r4c4', 'r4c5', 'r4c6', 'r4c7', 'r4c8', 'r4c9', 'r4c10'],
+ ['r5c1', 'r5c2', 'r5c3', 'r5c4', 'r5c5', 'r5c6', 'r5c7', 'r5c8', 'r5c9', 'r5c10'],
+ ['r6c1', 'r6c2', 'r6c3', 'r6c4', 'r6c5', 'r6c6', 'r6c7', 'r6c8', 'r6c9', 'r6c10'],
+ ['r7c1', 'r7c2', 'r7c3', 'r7c4', 'r7c5', 'r7c6', 'r7c7', 'r7c8', 'r7c9', 'r7c10'],
+ ['r8c1', 'r8c2', 'r8c3', 'r8c4', 'r8c5', 'r8c6', 'r8c7', 'r8c8', 'r8c9', 'r8c10'],
+ ['r9c1', 'r9c2', 'r9c3', 'r9c4', 'r9c5', 'r9c6', 'r9c7', 'r9c8', 'r9c9', 'r9c10'],
+ ['r10c1', 'r10c2', 'r10c3', 'r10c4', 'r10c5', 'r10c6', 'r10c7', 'r10c8', 'r10c9', 'r10c10']]
+
++-----+-------+-------+-------+-------+-------+-------+-------+-------+-------+--------+
+|  0  |  col1 |  col2 |  col3 |  col4 |  col5 |  col6 |  col7 |  col8 |  col9 | col10  |
++-----+-------+-------+-------+-------+-------+-------+-------+-------+-------+--------+
+|  1  |  r1c1 |  r2c1 |  r3c1 |  r4c1 |  r5c1 |  r6c1 |  r7c1 |  r8c1 |  r9c1 | r10c1  |
+|  2  |  r1c2 |  r2c2 |  r3c2 |  r4c2 |  r5c2 |  r6c2 |  r7c2 |  r8c2 |  r9c2 | r10c1  |
+|  3  |  r1c3 |  r2c3 |  r3c3 |  r4c3 |  r5c3 |  r6c3 |  r7c3 |  r8c3 |  r9c3 | r10c1  |
+|  4  |  r1c4 |  r2c4 |  r3c4 |  r4c4 |  r5c4 |  r6c4 |  r7c4 |  r8c4 |  r9c4 | r10c1  |
+|  5  |  r1c5 |  r2c5 |  r3c5 |  r4c5 |  r5c5 |  r6c5 |  r7c5 |  r8c5 |  r9c5 | r10c1  |
+|  6  |  r1c6 |  r2c6 |  r3c6 |  r4c6 |  r5c6 |  r6c6 |  r7c6 |  r8c6 |  r9c6 | r10c1  |
+|  7  |  r1c7 |  r2c7 |  r3c7 |  r4c7 |  r5c7 |  r6c7 |  r7c7 |  r8c7 |  r9c7 | r10c1  |
+|  8  |  r1c8 |  r2c8 |  r3c8 |  r4c8 |  r5c8 |  r6c8 |  r7c8 |  r8c8 |  r9c8 | r10c1  |
+|  9  |  r1c9 |  r2c9 |  r3c9 |  r4c9 |  r5c9 |  r6c9 |  r7c9 |  r8c9 |  r9c9 | r10c1  |
+|  10 | r1c10 | r2c10 | r3c10 | r4c10 | r5c10 | r6c10 | r7c10 | r8c10 | r9c10 | r10c1  |
+|  11 | r1c10 |  r2c9 |  r3c8 |  r4c7 |  r5c6 |  r6c5 |  r7c4 |  r8c3 |  r9c2 | r10c2  |
+|  12 |  r1c9 |  r2c8 |  r3c7 |  r4c6 |  r5c5 |  r6c4 |  r7c3 |  r8c2 |  r9c1 | r10c2  |
+|  13 |  r1c8 |  r2c7 |  r3c6 |  r4c5 |  r5c4 |  r6c3 |  r7c2 |  r8c1 | r9c10 | r10c2  |
+|  14 |  r1c7 |  r2c6 |  r3c5 |  r4c4 |  r5c3 |  r6c2 |  r7c1 | r8c10 |  r9c9 | r10c2  |
+|  15 |  r1c6 |  r2c5 |  r3c4 |  r4c3 |  r5c2 |  r6c1 | r7c10 |  r8c9 |  r9c8 | r10c2  |
+|  16 |  r1c5 |  r2c4 |  r3c3 |  r4c2 |  r5c1 | r6c10 |  r7c9 |  r8c8 |  r9c7 | r10c2  |
+|  17 |  r1c4 |  r2c3 |  r3c2 |  r4c1 | r5c10 |  r6c9 |  r7c8 |  r8c7 |  r9c6 | r10c2  |
+|  18 |  r1c3 |  r2c2 |  r3c1 | r4c10 |  r5c9 |  r6c8 |  r7c7 |  r8c6 |  r9c5 | r10c2  |
+|  19 |  r1c2 |  r2c1 | r3c10 |  r4c9 |  r5c8 |  r6c7 |  r7c6 |  r8c5 |  r9c4 | r10c2  |
+|  20 |  r1c1 | r2c10 |  r3c9 |  r4c8 |  r5c7 |  r6c6 |  r7c5 |  r8c4 |  r9c3 | r10c2  |
+|  21 |  r1c1 |  r2c9 |  r3c7 |  r4c5 |  r5c3 |  r6c8 |  r7c6 |  r8c4 |  r9c2 | r10c3  |
+|  22 |  r1c2 |  r2c8 |  r3c6 |  r4c4 | r5c10 |  r6c1 |  r7c9 |  r8c3 |  r9c5 | r10c3  |
+|  23 |  r1c3 |  r2c7 |  r3c5 |  r4c1 |  r5c2 | r6c10 |  r7c4 |  r8c5 |  r9c3 | r10c3  |
+|  24 |  r1c4 |  r2c6 |  r3c9 |  r4c2 |  r5c8 |  r6c5 |  r7c3 |  r8c1 |  r9c8 | r10c3  |
+|  25 |  r1c5 | r2c10 |  r3c8 |  r4c3 |  r5c9 |  r6c4 |  r7c2 |  r8c7 |  r9c6 | r10c3  |
+|  26 |  r1c6 |  r2c1 |  r3c2 | r4c10 |  r5c4 |  r6c5 |  r7c9 | r8c10 |  r9c3 | r10c4  |
+|  27 |  r1c7 |  r2c2 |  r3c3 |  r4c8 |  r5c5 |  r6c9 | r7c10 |  r8c1 |  r9c4 | r10c4  |
+|  28 |  r1c8 |  r2c3 |  r3c4 |  r4c9 |  r5c6 |  r6c2 |  r7c7 |  r8c2 |  r9c1 | r10c3  |
+|  29 |  r1c9 |  r2c4 | r3c10 |  r4c7 |  r5c2 |  r6c6 |  r7c1 |  r8c8 |  r9c5 | r10c4  |
+|  30 | r1c10 |  r2c5 |  r3c1 |  r4c6 |  r5c7 |  r6c3 |  r7c8 |  r8c9 |  r9c4 | r10c3  |
+|  31 |  r1c3 |  r2c5 |  r3c6 |  r4c8 |  r5c1 |  r6c7 |  r7c1 |  r8c2 |  r9c9 | r10c5  |
+|  32 |  r1c1 |  r2c4 |  r3c5 | r4c10 |  r5c8 |  r6c9 |  r7c2 |  r8c3 |  r9c7 | r10c5  |
+|  33 | r1c10 |  r2c6 |  r3c2 |  r4c9 |  r5c1 |  r6c4 |  r7c5 |  r8c6 | r9c10 | r10c6  |
+|  34 |  r1c9 |  r2c3 |  r3c8 |  r4c5 |  r5c7 |  r6c1 | r7c10 |  r8c6 |  r9c7 | r10c7  |
+|  35 |  r1c8 |  r2c9 |  r3c1 |  r4c4 |  r5c5 | r6c10 |  r7c6 |  r8c7 |  r9c8 | r10c5  |
+|  36 |  r1c7 |  r2c1 |  r3c4 |  r4c2 | r5c10 |  r6c6 |  r7c5 |  r8c9 |  r9c2 | r10c5  |
+|  37 |  r1c6 | r2c10 |  r3c3 |  r4c1 |  r5c8 |  r6c2 |  r7c4 |  r8c2 |  r9c5 | r10c7  |
+|  38 |  r1c5 |  r2c8 |  r3c9 |  r4c7 |  r5c3 |  r6c3 | r7c10 |  r8c5 |  r9c6 | r10c5  |
+|  39 |  r1c4 |  r2c2 | r3c10 |  r4c6 |  r5c3 |  r6c1 |  r7c5 |  r8c8 |  r9c9 | r10c8  |
+|  40 |  r1c2 |  r2c7 |  r3c4 | r4c10 |  r5c1 |  r6c8 |  r7c3 | r8c10 |  r9c6 | r10c7  |
+|  41 |  r1c5 |  r2c9 | r3c10 |  r4c1 |  r5c4 |  r6c7 |  r7c3 |  r8c6 |  r9c2 | r10c9  |
+|  42 |  r1c8 |  r2c4 |  r3c7 |  r4c3 | r5c10 |  r6c5 |  r7c1 |  r8c6 |  r9c4 | r10c8  |
+|  43 | r1c10 |  r2c2 |  r3c5 |  r4c3 |  r5c4 |  r6c6 |  r7c8 |  r8c5 |  r9c1 | r10c7  |
+|  44 |  r1c1 |  r2c6 |  r3c3 |  r4c7 |  r5c9 | r6c10 |  r7c8 |  r8c4 | r9c10 | r10c8  |
+|  45 |  r1c3 |  r2c8 |  r3c2 |  r4c5 |  r5c6 |  r6c9 |  r7c1 |  r8c4 |  r9c8 | r10c9  |
+|  46 |  r1c2 |  r2c5 |  r3c8 |  r4c1 |  r5c3 |  r6c6 |  r7c7 |  r8c1 | r9c10 | r10c10 |
+|  47 |  r1c4 | r2c10 |  r3c7 |  r4c9 |  r5c2 |  r6c3 |  r7c9 |  r8c3 |  r9c1 | r10c9  |
+|  48 |  r1c6 |  r2c7 |  r3c1 |  r4c2 |  r5c3 |  r6c4 |  r7c8 |  r8c3 |  r9c9 | r10c9  |
+|  49 |  r1c7 |  r2c3 |  r3c9 |  r4c6 |  r5c1 |  r6c8 |  r7c2 |  r8c5 |  r9c5 | r10c9  |
+|  50 |  r1c9 |  r2c1 |  r3c6 |  r4c3 |  r5c7 |  r6c2 |  r7c4 |  r8c8 | r9c10 | r10c9  |
+|  51 |  r1c9 |  r2c6 |  r3c1 |  r4c8 |  r5c4 |  r6c7 |  r7c2 | r8c10 |  r9c3 | r10c10 |
+|  52 |  r1c3 |  r2c4 |  r3c9 |  r4c4 |  r5c6 |  r6c1 |  r7c8 | r8c10 |  r9c2 | r10c6  |
+|  53 |  r1c1 |  r2c5 | r3c10 |  r4c4 |  r5c9 |  r6c2 |  r7c3 |  r8c7 |  r9c7 | r10c4  |
+|  54 | r1c10 |  r2c8 |  r3c4 |  r4c1 |  r5c9 |  r6c5 |  r7c6 |  r8c8 |  r9c9 | r10c6  |
+|  55 |  r1c5 |  r2c7 |  r3c2 |  r4c8 |  r5c8 |  r6c1 |  r7c7 |  r8c9 |  r9c1 | r10c8  |
+|  56 |  r1c8 |  r2c1 |  r3c5 |  r4c6 |  r5c9 |  r6c7 | r7c10 |  r8c4 |  r9c6 | r10c6  |
+|  57 |  r1c7 |  r2c9 |  r3c6 | r4c10 |  r5c2 |  r6c4 |  r7c8 |  r8c1 |  r9c3 | r10c8  |
+|  58 |  r1c6 |  r2c2 |  r3c7 |  r4c4 |  r5c1 |  r6c3 |  r7c7 |  r8c8 |  r9c3 | r10c10 |
+|  59 |  r1c4 |  r2c9 |  r3c3 |  r4c5 |  r5c7 |  r6c6 |  r7c2 | r8c10 |  r9c1 | r10c6  |
+|  60 |  r1c2 |  r2c3 |  r3c7 |  r4c8 |  r5c9 | r6c10 |  r7c5 |  r8c1 |  r9c8 | r10c6  |
+|  61 | r1c10 |  r2c4 |  r3c6 |  r4c9 |  r5c5 |  r6c8 |  r7c7 |  r8c7 |  r9c3 | r10c7  |
+|  62 |  r1c1 |  r2c8 |  r3c8 |  r4c2 |  r5c4 |  r6c7 |  r7c4 |  r8c9 |  r9c5 | r10c6  |
+|  63 |  r1c3 | r2c10 |  r3c4 |  r4c7 |  r5c5 |  r6c9 |  r7c9 |  r8c6 | r9c10 | r10c10 |
+|  64 |  r1c5 |  r2c6 |  r3c7 | r4c10 |  r5c6 |  r6c2 | r7c10 |  r8c5 |  r9c9 | r10c10 |
+|  65 |  r1c9 |  r2c2 |  r3c4 |  r4c5 |  r5c8 | r6c10 |  r7c1 |  r8c7 |  r9c6 | r10c9  |
+|  66 |  r1c2 | r2c10 |  r3c5 |  r4c2 |  r5c6 |  r6c8 |  r7c1 |  r8c9 |  r9c7 | r10c8  |
+|  67 |  r1c4 |  r2c7 |  r3c8 |  r4c9 | r5c10 |  r6c2 |  r7c6 |  r8c2 |  r9c3 | r10c4  |
+|  68 |  r1c6 |  r2c3 | r3c10 |  r4c7 |  r5c5 |  r6c4 |  r7c2 |  r8c9 |  r9c4 | r10c7  |
+|  69 |  r1c7 |  r2c5 |  r3c2 |  r4c9 |  r5c4 | r6c10 |  r7c4 |  r8c3 |  r9c6 | r10c10 |
+|  70 |  r1c8 |  r2c6 | r3c10 |  r4c3 |  r5c7 |  r6c9 |  r7c9 |  r8c2 |  r9c2 | r10c10 |
+|  71 | r1c10 |  r2c1 |  r3c9 |  r4c5 |  r5c2 |  r6c7 |  r7c7 |  r8c3 |  r9c4 | r10c10 |
+|  72 |  r1c9 |  r2c7 |  r3c3 |  r4c4 |  r5c6 |  r6c5 |  r7c5 |  r8c7 |  r9c4 | r10c5  |
+|  73 |  r1c3 |  r2c9 |  r3c2 |  r4c6 | r5c10 |  r6c3 |  r7c6 |  r8c1 |  r9c7 | r10c7  |
+|  74 |  r1c6 |  r2c8 |  r3c5 |  r4c9 |  r5c7 | r6c10 |  r7c3 |  r8c1 |  r9c2 | r10c8  |
+|  75 |  r1c5 |  r2c1 |  r3c1 |  r4c4 |  r5c2 |  r6c9 |  r7c3 |  r8c2 | r9c10 | r10c7  |
+|  76 |  r1c1 |  r2c3 |  r3c6 |  r4c2 |  r5c5 |  r6c3 | r7c10 | r8c10 |  r9c2 | r10c8  |
+|  77 |  r1c8 |  r2c2 |  r3c9 |  r4c1 |  r5c5 |  r6c4 |  r7c4 | r8c10 |  r9c7 | r10c5  |
+|  78 |  r1c4 |  r2c5 |  r3c3 | r4c10 | r5c10 |  r6c8 |  r7c7 |  r8c4 |  r9c9 | r10c10 |
+|  79 |  r1c2 |  r2c4 |  r3c1 |  r4c5 |  r5c9 |  r6c2 |  r7c4 |  r8c2 |  r9c8 | r10c8  |
+|  80 |  r1c7 | r2c10 |  r3c1 |  r4c3 |  r5c8 |  r6c5 |  r7c5 |  r8c4 |  r9c7 | r10c6  |
+|  81 | r1c10 |  r2c3 |  r3c5 |  r4c8 |  r5c3 |  r6c5 |  r7c9 |  r8c7 | r9c10 | r10c4  |
+|  82 |  r1c2 |  r2c6 |  r3c8 |  r4c6 |  r5c5 |  r6c9 |  r7c7 |  r8c8 |  r9c1 | r10c5  |
+|  83 |  r1c4 |  r2c8 |  r3c1 |  r4c7 |  r5c1 |  r6c6 | r7c10 |  r8c7 |  r9c2 | r10c3  |
+|  84 |  r1c1 |  r2c7 | r3c10 |  r4c6 |  r5c6 |  r6c5 |  r7c9 |  r8c1 |  r9c8 | r10c10 |
+|  85 |  r1c3 |  r2c1 |  r3c7 |  r4c2 |  r5c4 |  r6c1 |  r7c2 |  r8c7 |  r9c9 | r10c4  |
+|  86 |  r1c9 | r2c10 |  r3c2 |  r4c4 |  r5c3 |  r6c7 |  r7c8 |  r8c5 |  r9c8 | r10c4  |
+|  87 |  r1c8 |  r2c5 |  r3c9 | r4c10 |  r5c3 |  r6c1 |  r7c6 |  r8c9 |  r9c1 | r10c9  |
+|  88 |  r1c5 |  r2c2 |  r3c6 |  r4c7 | r5c10 |  r6c8 |  r7c3 |  r8c4 |  r9c1 | r10c6  |
+|  89 | r1c10 |  r2c7 |  r3c3 |  r4c9 |  r5c4 |  r6c1 |  r7c1 |  r8c4 |  r9c5 | r10c5  |
+|  90 |  r1c6 |  r2c4 |  r3c8 |  r4c8 |  r5c2 |  r6c3 |  r7c5 |  r8c5 |  r9c7 | r10c3  |
+|  91 |  r1c7 |  r2c8 | r3c10 |  r4c5 |  r5c1 |  r6c2 |  r7c8 |  r8c6 |  r9c3 | r10c5  |
+|  92 |  r1c4 |  r2c1 |  r3c6 |  r4c8 |  r5c6 | r6c10 |  r7c3 |  r8c9 |  r9c5 | r10c10 |
+|  93 |  r1c2 |  r2c9 |  r3c4 |  r4c3 |  r5c7 |  r6c4 |  r7c1 |  r8c5 |  r9c5 | r10c4  |
+|  94 |  r1c9 |  r2c5 |  r3c5 |  r4c2 |  r5c1 |  r6c9 |  r7c6 |  r8c3 |  r9c3 | r10c8  |
+|  95 |  r1c3 |  r2c6 |  r3c8 | r4c10 |  r5c7 |  r6c8 |  r7c5 |  r8c3 |  r9c4 | r10c4  |
+|  96 |  r1c1 |  r2c2 |  r3c2 |  r4c3 |  r5c5 |  r6c7 |  r7c7 |  r8c8 |  r9c9 | r10c3  |
+|  97 |  r1c7 |  r2c4 |  r3c8 |  r4c1 |  r5c6 |  r6c3 |  r7c9 |  r8c4 | r9c10 | r10c4  |
+|  98 |  r1c5 |  r2c3 |  r3c4 |  r4c6 |  r5c4 |  r6c6 |  r7c4 |  r8c3 |  r9c8 | r10c4  |
+|  99 |  r1c8 | r2c10 |  r3c3 |  r4c6 |  r5c2 |  r6c5 |  r7c6 | r8c10 |  r9c2 | r10c9  |
+| 100 | r1c10 |  r2c9 |  r3c5 |  r4c2 |  r5c8 |  r6c1 |  r7c7 |  r8c2 |  r9c6 | r10c10 |
+| 101 |  r1c6 |  r2c9 |  r3c9 |  r4c8 | r5c10 |  r6c2 |  r7c1 |  r8c8 | r9c10 | r10c7  |
+| 102 |  r1c8 |  r2c4 |  r3c2 |  r4c7 |  r5c7 |  r6c6 |  r7c3 |  r8c1 |  r9c9 | r10c5  |
+| 103 |  r1c2 |  r2c6 |  r3c4 |  r4c7 |  r5c4 |  r6c3 |  r7c5 |  r8c2 |  r9c7 | r10c9  |
+| 104 |  r1c3 |  r2c1 | r3c10 |  r4c9 |  r5c3 |  r6c5 | r7c10 |  r8c8 |  r9c1 | r10c3  |
+| 105 |  r1c1 |  r2c8 |  r3c4 | r4c10 |  r5c2 |  r6c7 |  r7c5 |  r8c7 |  r9c1 | r10c10 |
+| 106 |  r1c4 |  r2c3 |  r3c5 |  r4c4 |  r5c8 |  r6c3 |  r7c1 |  r8c6 |  r9c9 | r10c10 |
+| 107 | r1c10 |  r2c5 |  r3c7 |  r4c4 |  r5c8 |  r6c6 |  r7c9 | r8c10 |  r9c6 | r10c8  |
+| 108 |  r1c9 |  r2c1 |  r3c8 | r4c10 |  r5c5 |  r6c3 |  r7c1 |  r8c3 |  r9c2 | r10c6  |
+| 109 |  r1c1 | r2c10 |  r3c6 |  r4c1 |  r5c9 |  r6c1 |  r7c5 |  r8c5 |  r9c4 | r10c9  |
+| 110 |  r1c2 |  r2c2 |  r3c8 |  r4c4 |  r5c7 |  r6c5 | r7c10 |  r8c9 |  r9c3 | r10c9  |
+| 111 |  r1c6 |  r2c7 |  r3c9 |  r4c3 |  r5c9 | r6c10 |  r7c7 | r8c10 |  r9c2 | r10c4  |
+| 112 |  r1c7 |  r2c8 |  r3c3 |  r4c3 |  r5c9 |  r6c4 |  r7c6 |  r8c8 |  r9c8 | r10c7  |
+| 113 |  r1c6 |  r2c6 | r3c10 |  r4c5 | r5c10 |  r6c8 |  r7c4 |  r8c7 |  r9c9 | r10c6  |
+| 114 |  r1c4 |  r2c4 |  r3c7 |  r4c1 |  r5c3 |  r6c9 |  r7c4 |  r8c9 | r9c10 | r10c5  |
+| 115 |  r1c8 |  r2c1 |  r3c3 |  r4c2 |  r5c9 |  r6c8 |  r7c9 |  r8c5 | r9c10 | r10c5  |
+| 116 |  r1c5 | r2c10 |  r3c1 |  r4c9 |  r5c4 |  r6c2 |  r7c7 |  r8c8 |  r9c4 | r10c6  |
+| 117 | r1c10 |  r2c5 | r3c10 |  r4c8 |  r5c6 |  r6c4 |  r7c2 |  r8c6 |  r9c2 | r10c7  |
+| 118 | r1c10 |  r2c4 |  r3c5 |  r4c6 | r5c10 |  r6c2 |  r7c2 |  r8c1 |  r9c8 | r10c9  |
+| 119 |  r1c8 |  r2c3 |  r3c1 | r4c10 |  r5c2 |  r6c7 |  r7c9 |  r8c8 |  r9c6 | r10c4  |
+| 120 |  r1c4 |  r2c1 |  r3c4 |  r4c7 |  r5c3 | r6c10 |  r7c2 |  r8c6 |  r9c7 | r10c8  |
+| 121 |  r1c2 |  r2c8 |  r3c3 |  r4c7 |  r5c8 |  r6c2 |  r7c8 | r8c10 | r9c10 | r10c3  |
+| 122 |  r1c1 |  r2c7 |  r3c6 |  r4c9 |  r5c5 |  r6c6 |  r7c8 |  r8c2 |  r9c7 | r10c10 |
+| 123 |  r1c5 |  r2c2 | r3c10 |  r4c2 |  r5c7 |  r6c3 |  r7c6 |  r8c3 | r9c10 | r10c7  |
+| 124 |  r1c9 |  r2c4 |  r3c8 |  r4c1 |  r5c1 |  r6c8 | r7c10 |  r8c2 |  r9c8 | r10c8  |
+| 125 |  r1c3 | r2c10 |  r3c6 |  r4c5 |  r5c8 |  r6c4 |  r7c9 |  r8c9 |  r9c6 | r10c4  |
+| 126 |  r1c4 |  r2c6 |  r3c2 |  r4c3 |  r5c9 |  r6c8 |  r7c1 |  r8c1 |  r9c5 | r10c7  |
+| 127 |  r1c8 |  r2c4 |  r3c9 |  r4c6 |  r5c4 |  r6c9 |  r7c5 | r8c10 |  r9c5 | r10c8  |
+| 128 |  r1c1 |  r2c4 |  r3c8 |  r4c6 |  r5c8 | r6c10 |  r7c3 |  r8c6 |  r9c1 | r10c4  |
+| 129 |  r1c2 | r2c10 |  r3c9 | r4c10 |  r5c1 |  r6c5 |  r7c4 |  r8c2 |  r9c9 | r10c7  |
+| 130 |  r1c9 |  r2c8 |  r3c6 |  r4c8 |  r5c3 |  r6c5 |  r7c7 |  r8c5 |  r9c8 | r10c9  |
+| 131 |  r1c5 |  r2c7 |  r3c3 |  r4c6 |  r5c9 |  r6c3 |  r7c1 |  r8c7 |  r9c3 | r10c6  |
+| 132 |  r1c6 |  r2c4 |  r3c3 |  r4c2 |  r5c2 |  r6c7 |  r7c6 |  r8c6 |  r9c1 | r10c10 |
+| 133 |  r1c7 |  r2c8 |  r3c4 |  r4c8 |  r5c3 |  r6c1 |  r7c4 |  r8c2 |  r9c4 | r10c6  |
+| 134 |  r1c1 |  r2c7 |  r3c5 |  r4c7 | r5c10 |  r6c4 | r7c10 |  r8c8 |  r9c2 | r10c10 |
+| 135 |  r1c8 |  r2c6 |  r3c4 |  r4c1 |  r5c2 |  r6c1 |  r7c3 |  r8c3 |  r9c3 | r10c6  |
+| 136 |  r1c9 |  r2c2 | r3c10 |  r4c9 |  r5c6 |  r6c7 |  r7c9 |  r8c1 |  r9c8 | r10c7  |
+| 137 |  r1c9 |  r2c9 | r3c10 |  r4c7 |  r5c1 |  r6c1 |  r7c5 |  r8c4 |  r9c4 | r10c7  |
+| 138 |  r1c2 |  r2c8 |  r3c1 |  r4c4 | r5c10 |  r6c7 |  r7c2 |  r8c5 |  r9c2 | r10c8  |
+| 139 |  r1c2 | r2c10 |  r3c7 |  r4c7 |  r5c5 |  r6c2 |  r7c3 |  r8c4 |  r9c6 | r10c7  |
+| 140 |  r1c4 |  r2c1 | r3c10 |  r4c7 |  r5c5 |  r6c1 |  r7c6 |  r8c5 |  r9c8 | r10c6  |
+| 141 | r1c10 |  r2c3 | r3c10 |  r4c4 |  r5c9 |  r6c9 |  r7c3 |  r8c5 |  r9c1 | r10c10 |
+| 142 |  r1c6 |  r2c3 | r3c10 |  r4c8 |  r5c2 |  r6c9 |  r7c6 |  r8c4 |  r9c6 | r10c5  |
+| 143 |  r1c5 |  r2c5 |  r3c4 |  r4c7 |  r5c4 |  r6c8 |  r7c8 |  r8c1 |  r9c3 | r10c6  |
+| 144 |  r1c7 |  r2c8 |  r3c3 | r4c10 |  r5c4 |  r6c6 |  r7c3 |  r8c8 |  r9c4 | r10c3  |
+| 145 |  r1c3 |  r2c8 |  r3c3 |  r4c3 |  r5c6 |  r6c2 |  r7c9 |  r8c9 |  r9c3 | r10c6  |
+| 146 |  r1c2 |  r2c8 |  r3c8 |  r4c4 |  r5c8 |  r6c8 | r7c10 |  r8c7 |  r9c5 | r10c4  |
+| 147 |  r1c9 |  r2c1 |  r3c8 |  r4c3 |  r5c1 |  r6c4 |  r7c8 | r8c10 |  r9c8 | r10c4  |
+| 148 |  r1c9 | r2c10 |  r3c9 |  r4c9 | r5c10 | r6c10 |  r7c2 |  r8c6 |  r9c8 | r10c3  |
+| 149 |  r1c8 | r2c10 |  r3c7 |  r4c2 |  r5c1 | r6c10 |  r7c8 |  r8c1 |  r9c4 | r10c7  |
+| 150 |  r1c1 |  r2c7 |  r3c2 |  r4c1 |  r5c7 |  r6c9 |  r7c2 |  r8c8 |  r9c6 | r10c6  |
+| 151 |  r1c3 |  r2c8 |  r3c2 |  r4c5 |  r5c4 |  r6c6 | r7c10 |  r8c8 |  r9c4 | r10c8  |
+| 152 |  r1c2 |  r2c8 | r3c10 |  r4c4 |  r5c9 |  r6c6 |  r7c7 |  r8c1 |  r9c6 | r10c9  |
+| 153 |  r1c2 |  r2c8 |  r3c8 |  r4c2 |  r5c8 |  r6c3 |  r7c4 |  r8c6 |  r9c8 | r10c6  |
+| 154 |  r1c1 |  r2c8 |  r3c8 |  r4c2 |  r5c8 |  r6c5 |  r7c2 |  r8c4 |  r9c3 | r10c7  |
+| 155 | r1c10 |  r2c8 |  r3c8 |  r4c9 |  r5c2 |  r6c8 |  r7c4 | r8c10 |  r9c9 | r10c6  |
+| 156 | r1c10 |  r2c8 |  r3c3 |  r4c3 |  r5c3 |  r6c5 |  r7c8 | r8c10 |  r9c6 | r10c7  |
+| 157 | r1c10 |  r2c8 |  r3c9 |  r4c3 |  r5c8 |  r6c2 |  r7c5 |  r8c7 |  r9c7 | r10c8  |
+| 158 |  r1c4 | r2c10 |  r3c5 |  r4c3 |  r5c8 |  r6c7 |  r7c4 |  r8c1 |  r9c2 | r10c5  |
+| 159 |  r1c5 |  r2c4 |  r3c5 | r4c10 |  r5c9 | r6c10 |  r7c4 | r8c10 |  r9c4 | r10c6  |
+| 160 |  r1c7 |  r2c4 |  r3c6 | r4c10 |  r5c9 |  r6c9 |  r7c4 |  r8c3 |  r9c1 | r10c3  |
+| 161 |  r1c2 |  r2c4 |  r3c7 | r4c10 |  r5c4 | r6c10 |  r7c6 |  r8c2 |  r9c5 | r10c6  |
+| 162 |  r1c2 |  r2c4 |  r3c1 | r4c10 |  r5c6 | r6c10 |  r7c5 |  r8c8 |  r9c6 | r10c6  |
+| 163 |  r1c2 |  r2c7 |  r3c8 | r4c10 |  r5c3 | r6c10 |  r7c8 |  r8c6 |  r9c5 | r10c6  |
+| 164 |  r1c2 |  r2c6 |  r3c8 | r4c10 |  r5c1 | r6c10 |  r7c9 |  r8c9 |  r9c8 | r10c6  |
+| 165 |  r1c2 |  r2c5 |  r3c8 |  r4c8 |  r5c5 | r6c10 |  r7c9 |  r8c8 |  r9c4 | r10c9  |
+| 166 |  r1c2 |  r2c9 |  r3c8 |  r4c8 |  r5c7 | r6c10 | r7c10 |  r8c3 |  r9c8 | r10c6  |
+| 167 |  r1c2 |  r2c8 |  r3c8 |  r4c6 |  r5c9 | r6c10 |  r7c1 |  r8c8 |  r9c9 | r10c3  |
+| 168 |  r1c2 |  r2c8 |  r3c8 |  r4c6 |  r5c9 |  r6c2 |  r7c4 |  r8c3 | r9c10 | r10c6  |
+| 169 |  r1c2 |  r2c8 |  r3c8 |  r4c5 |  r5c9 |  r6c7 |  r7c3 |  r8c8 | r9c10 | r10c6  |
+| 170 |  r1c2 |  r2c8 |  r3c8 | r4c10 |  r5c9 |  r6c3 |  r7c4 |  r8c8 |  r9c5 | r10c6  |
+| 171 |  r1c2 |  r2c8 |  r3c8 | r4c10 |  r5c9 |  r6c1 |  r7c4 |  r8c8 | r9c10 | r10c6  |
+| 172 |  r1c2 |  r2c8 |  r3c8 | r4c10 |  r5c9 |  r6c4 |  r7c7 |  r8c8 |  r9c8 | r10c6  |
++-----+-------+-------+-------+-------+-------+-------+-------+-------+-------+--------+
+
+
+```
 ## Authors
 
 * **Joe Orzehoski** - *Initial work* - [Linkedin Profile](http://www.linkedin.com/in/joeorzehoski)
