@@ -179,6 +179,55 @@ joe@joemac:[allpairs] allpairs --csv_out ./data/ap_datafile.py > ap.csv
 20,2016,Brown,Toyota
 ```
 
+## allpairs Useful Option:
+
+One useful option built into the tool is to see the output in a pretty printed text table (default).
+Combine with the -v (verbose) option to see the the labels, parameters, pretty table, and combination counts.
+You can remove the counts (-n) and the labels (-r) from the output data as well.  See the section on "allpairs Usage Message" below for more information of all the options available.
+
+```
+joe@joemac:[allpairs] allpairs -v ./data/ap_datafile.py
+Note: Processing python datafile: ./data/ap_datafile.py
+
+labels:
+['Year', 'Colors', 'Car']
+
+parameters:
+[['2015', '2016', '2017', '2018'],
+ ['Red', 'Blue', 'Green', 'Gray', 'Brown'],
+ ['Honda', 'Toyota', 'Ford']]
+
++----+------+--------+--------+
+| 0  | Year | Colors |  Car   |
++----+------+--------+--------+
+| 1  | 2015 |  Red   | Honda  |
+| 2  | 2016 |  Blue  | Honda  |
+| 3  | 2017 | Green  | Honda  |
+| 4  | 2018 |  Gray  | Honda  |
+| 5  | 2018 | Brown  | Toyota |
+| 6  | 2017 | Brown  |  Ford  |
+| 7  | 2016 |  Red   |  Ford  |
+| 8  | 2015 |  Gray  |  Ford  |
+| 9  | 2015 | Green  | Toyota |
+| 10 | 2016 | Green  |  Ford  |
+| 11 | 2017 |  Blue  | Toyota |
+| 12 | 2018 |  Blue  |  Ford  |
+| 13 | 2016 |  Gray  | Toyota |
+| 14 | 2018 |  Red   | Toyota |
+| 15 | 2017 |  Red   | Toyota |
+| 16 | 2015 | Brown  | Honda  |
+| 17 | 2015 |  Blue  | Toyota |
+| 18 | 2017 |  Gray  | Toyota |
+| 19 | 2018 | Green  | Toyota |
+| 20 | 2016 | Brown  | Toyota |
++----+------+--------+--------+
+
+All Combinations:       60 [4, 5, 3]
+    vs
+All Pairs:              20
+```
+
+
 ## Framework Files
 
 The framework and description looks like this:
