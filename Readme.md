@@ -7,7 +7,7 @@ This is a tool to generate All-pairs test combinations from a json, python, or y
 
 ## What Problem Does allpairs Solve?
 The [allpairspy](https://github.com/thombashi/allpairspy) library gives a very useful library for creating All-pairs combinations.
-This program extends the library by creating a command line utility to use the library by simply calling the utility with an input datafile for the label and parameters.  This allows one to simply generate allpairs combinations without knowing how to code in python.  The user just defines an input file for the labels and parameters in `json`, `yml`, or `python` format and calls the utility with the datafile as an argument to generate the combinations.  See the *Usage* section below on how to run.
+This program extends the library by creating a command line utility to use the library by simply calling the utility with an input datafile for the label and parameters.  This allows one to simply generate allpairs combinations without knowing how to code in python.  The user just defines an input file for the labels and parameters in `json`, `yml`, or `python` format and calls the utility with the datafile as an argument to generate the combinations.  See the [Usage](https://github.com/joebmt/allpairs/blob/master/Readme.md#allpairs-usage-message) section below on how to run.
 
 ## Description
 
@@ -55,7 +55,7 @@ make install_allpairs
 
 Follow the 3 steps below to setup a input datafile and execute these labels and parameters specified with the allpairs tool.
 
-### Step 1: Run allpairs --examples to see the input syntax in python, json, or yml format
+### Step 1: Run allpairs --examples to see the input syntax in `python`, `json`, or `yml` format
 
 Run allpairs --examples to see examples of data file format in each of the 3 formats.
 There are also examples in the ./data directory included with the distribution of the the 3 formats.
@@ -128,8 +128,8 @@ parameters:
 ### Step 2: Create a data file in python, json, or yml format specifiying the labels and parameters
 
 Use the information in step 1 to create data file in one of the 3 formats.
-You will need to specify 2 variables inside the input files: *labels* and *parameters*
-See the ./data/ap_datafile\* for examples of the syntax.
+You will need to specify 2 variables inside the input files: `labels` and `parameters`
+See the `./data/ap_datafile\*` for examples of the syntax.
 The example below is for a python data file.
 
 ```
@@ -183,8 +183,8 @@ joe@joemac:[allpairs] allpairs --csv_out ./data/ap_datafile.py > ap.csv
 ## allpairs Useful Option:
 
 One useful option built into the tool is to see the output in a pretty printed text table (default).
-Combine with the -v (verbose) option to see the the labels, parameters, pretty table, and combination counts.
-You can remove the counts (-n) and the labels (-r) from the output data as well.  See the section on "allpairs Usage Message" below for more information of all the options available.
+Combine with the `-v` (verbose) option to see the the labels, parameters, pretty table, and combination counts.
+You can remove the counts (`-n`) and the labels (`-r`) from the output data as well.  See the section on [allpairs Usage Message](https://github.com/joebmt/allpairs/blob/master/Readme.md#allpairs-usage-message) below for more information of all the options available.
 
 ```
 joe@joemac:[allpairs] allpairs -v ./data/ap_datafile.py
