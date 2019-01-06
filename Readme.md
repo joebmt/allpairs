@@ -7,7 +7,7 @@ This is a tool to generate All-pairs test combinations from a json, python, or y
 
 ## What Problem Does allpairs Solve?
 The [allpairspy](https://github.com/thombashi/allpairspy) library gives a very useful library for creating All-pairs combinations.
-This program extends the library by creating a command line utility to use the library by simply calling the utility with an input datafile for the label and parameters.  This allows one to simply generate allpairs combinations without knowing how to code in python.  The user just defines an input file for the labels and parameters in `json`, `yml`, or `python` format and calls the utility with the datafile as an argument to generate the combinations.  See the [Usage](https://github.com/joebmt/allpairs/blob/master/Readme.md#allpairs-usage-message) section below on how to run.
+This program extends the library by creating a command line utility called `allpairs` to use the library by simply calling the utility with an input datafile for the label and parameters.  This allows one to simply generate All-Pairs combinations without knowing how to code in python.  The user just defines an input file for the labels and parameters in `json`, `yml`, or `python` format and calls the utility `allpairs` with the datafile as an argument to generate the combinations.  See the [Usage](https://github.com/joebmt/allpairs/blob/master/Readme.md#allpairs-usage-message) section below on how to run.
 
 ## Description
 
@@ -45,7 +45,7 @@ pip install -r requirements.txt
 
 ### Install allpairs to /usr/local/bin
 
-You can install the allpairs program to /usr/local/bin/allpairs:
+You can install the `allpairs` program to the directory `/usr/local/bin/allpairs` so it can be found in your execution path:
 
 ```
 make install_allpairs
@@ -130,6 +130,8 @@ parameters:
 Use the information in step 1 to create data file in one of the 3 formats.
 You will need to specify 2 variables inside the input files: `labels` and `parameters`
 See the `./data/ap_datafile\*` for examples of the syntax.
+There is a requirement that the data input file have the correct file suffix (`.py`, `.json`, `.yml` or `.yaml`) to run correctly.
+
 The example below is for a python data file.
 
 ```
@@ -148,14 +150,15 @@ parameters = \
 
 ### Step 3: Generate an allpairs csv file or text table of the pairwise combinations using your datafile as input
 
-You can install the allpairs program to /usr/local/bin/allpairs:
+The most used option is to generate an All-Pairs csv table.  Simply run the program with your data input file with the --csv_out option.
 
 ```
-allpairs --csv ./data/ap_datafile.py
+allpairs --csv_out ./data/ap_datafile.py > ap.csv
+cat ap.csv
 
 Output:
 
-joe@joemac:[allpairs] allpairs --csv_out ./data/ap_datafile.py > ap.csv
+allpairs --csv_out ./data/ap_datafile.py > ap.csv
 
 0,Year,Colors,Car
 1,2015,Red,Honda
