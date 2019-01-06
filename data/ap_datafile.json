@@ -1,0 +1,27 @@
+{
+  "labels": [
+    "Year",
+    "Colors",
+    "Car"
+  ],
+  "parameters": [
+    [
+      "2015",
+      "2016",
+      "2017",
+      "2018"
+    ],
+    [
+      "Red",
+      "Blue",
+      "Green",
+      "Gray",
+      "Brown"
+    ],
+    [
+      "Honda",
+      "Toyota",
+      "Ford"
+    ]
+  ]
+}

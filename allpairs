@@ -1,0 +1,383 @@
+#!/usr/bin/env python
+"""
+  Name: allpairs - Generate allpairs combinations from in input file (python, yml, json) specifying parameters and labels
+
+ Usage: allpairs [options] <DATAFILE>
+
+  Desc: allpairs [Options] <file>.<py|yml|json>
+
+  Examples:
+
+      allpairs -e ................ gives examples of input file syntax
+      allpairs ................... use the file "./ap_datafile.py" as a default datafile
+      allpairs --csv_out <file>.py use the file "./ap_datafile.py" as a default datafile and output in csv format
+      allpairs --nocnt ........... do not include count in output column 1
+      allpairs <file>.py ......... use a python input datafile
+      allpairs <file>.yml ........ use a yaml input datafile
+      allpairs <file>.json ....... use a json input datafile
+
+  Notes:
+
+    1. Must have "parameters" defined inside datafile which contains a list of lists
+    2. Must have "label"      defined inside datafile which contains a list of labels for the columns
+    3. Must have a datafile that has one of .py, .yml, or .json file extensions
+    4. See ap_datafile.yml, ap_datafile.json, ap_datafile.py for input specification format (or use -e option)
+    5. Install program dependencies: pip install allpairspy pprint prettytable
+    6. For allpairs information, see:
+       a. Effectiveness: https://www.stickyminds.com/sites/default/files/presentation/file/2013/08STRER_T19.pdf
+       b. How to implement: https://www.softwaretestinghelp.com/what-is-pairwise-testing/
+
+Options:
+  -c, --csv_out   Print Out Output in csv format only
+  -e, --examples  Print Out Examples of the 3 input file types
+  -n, --nocnt     Exclude count columns in allpairs output
+  -v, --verbose   Print Out Verbose Output
+  -h, --help      This usage message
+
+Todo:
+   1. Fix -r option so it takes out first row from prettyTable output (works only for csv output now)
+"""
+
+import os
+from pprint import pprint
+import click
+# import pandas
+from StringIO import StringIO
+import csv
+import prettytable
+import json
+import yaml
+# import sys
+# pprint(sys.path)
+from allpairspy import AllPairs
+
+
+def strip_surrounding_whitespace_from_csv_fh(infile=None):
+    """
+    Desc: Take a csv filehandle and then process each row and strip off surrounding whitespace
+
+    Note: Called by parse_csv_into_list_of_dicts
+
+    :param infile: csv file handle (Ex: infile = open('j.csv', r))
+    :return:       csv_string with surrounding whitespace removed
+    """
+
+    my_csv_no_surrounding_whitespace = ""
+    for row in csv.reader(infile):
+        row = [col.strip() for col in row]
+        my_csv_no_surrounding_whitespace = my_csv_no_surrounding_whitespace + ",".join(row) + "\n"
+
+    csv_string_stripped = my_csv_no_surrounding_whitespace.strip()  # Need to remove the last newline
+
+    # if DBG: print "csv_string_stripped: [%s]" % csv_string_stripped
+
+    return csv_string_stripped
+
+def pretty_print_csv(csv_string=None, csv_file=None, csv_delimiter=",", html_output=False, print_csv=True):
+    """
+    Desc: Class to pretty format a csv string or file passed in as an argument
+
+    Note:
+        1. Note: pip install prettytable
+        2. This will print out a panda dataframe using csv format for the panda dataframe:
+           if DBG: csv_str = load_profile_historical.to_csv()
+           if DBG: pretty_print_csv(csv_string=csv_str)
+        3. Can print a pretty text table (default)
+        4. Can print a pretty html table (html_output=True)
+        5. Can print a pretty html table (html_output=True)
+
+    :param csv_string:  A string containing rows of comma separated values
+    :param csv_file:    A file   containing rows of comma separated values
+    :param html_output: Return html pretty table instead of a text table
+    :param print_csv:   Retrun a text pretty table
+    :return:            pretty visual table of the csv rows either in text format or html format
+
+    Output:
+    historical[unit]: historical[V001321 - Hillcrest]:
+    +-----+---------------------+---------------------+------------+----------+-----------+---------------+---------------+---------------------+--------------+---------------------+----------------------+---------------+
+    |     |         name        |    utc_timestamp    |  utc_date  | utc_hour | utc_15min |   load_power  |    pv_power   |   local_timestamp   | pv_power_1kW |  billing_period_utc | billing_period_local | site_in_power |
+    +-----+---------------------+---------------------+------------+----------+-----------+---------------+---------------+---------------------+--------------+---------------------+----------------------+---------------+
+    |  0  | V001321 - Hillcrest | 2017-11-12 01:00:00 | 2017-11-12 |   1.0    |    0.0    | 300.689189189 | 3903.72972973 | 2017-11-12 14:00:00 |              | 2017-11-12 01:00:00 | 2017-11-12 14:00:00  |  57.472972973 |
+    |  1  | V001321 - Hillcrest | 2017-11-12 01:15:00 | 2017-11-12 |   1.0    |    15.0   | 331.136986301 | 3777.49315068 | 2017-11-12 14:15:00 |              | 2017-11-12 01:00:00 | 2017-11-12 14:00:00  | 99.6301369863 |
+    |  2  | V001321 - Hillcrest | 2017-11-12 01:30:00 | 2017-11-12 |   1.0    |    30.0   | 388.472972973 | 3693.86486486 | 2017-11-12 14:30:00 |              | 2017-11-12 01:30:00 | 2017-11-12 14:30:00  | 245.689189189 |
+    |  3  | V001321 - Hillcrest | 2017-11-12 01:45:00 | 2017-11-12 |   1.0    |    45.0   | 1341.43835616 | 3582.46575342 | 2017-11-12 14:45:00 |              | 2017-11-12 01:30:00 | 2017-11-12 14:30:00  | 701.273972603 |
+    """
+
+    content = None
+    table = None
+    infile = None
+    csv_string_list = list()
+
+    if csv_string:
+        infile = StringIO(csv_string)
+        csv_string_no_surrounding_whitespace = strip_surrounding_whitespace_from_csv_fh(infile)
+        csv_string_list = csv_string_no_surrounding_whitespace.split('\n')
+        # pprint(csv_string_list)
+        content = csv.reader(csv_string_list, delimiter=csv_delimiter, quotechar='"')
+
+    if csv_file:
+        infile = open(csv_file, 'r')
+        csv_string_no_surrounding_whitespace = strip_surrounding_whitespace_from_csv_fh(infile)
+        csv_string_list = csv_string_no_surrounding_whitespace.split('\n')
+        # content = csv.reader(infile, delimiter=csv_delimiter, quotechar='"')
+        content = csv.reader(csv_string_list, delimiter=csv_delimiter, quotechar='"')
+
+    infile.close()
+
+    for row in content:
+        # print "row: %s" % row
+        if table is None:
+            table = prettytable.PrettyTable(row)
+        elif not row:
+            pass  # skip
+        else:
+            table.add_row(row)
+            # table[:] = [item for item in table if item != '']  # remove empty elements
+
+    if print_csv:
+        if html_output:
+            print table.get_html_string()
+        else:
+            print table
+
+    if html_output:
+        return table.get_html_string()
+    else:
+        return table
+# parameters = [
+#     ["Brand X", "Brand Y"],
+#     ["98", "NT", "2000", "XP"],
+#     ["Internal", "Modem"],
+#     ["Salaried", "Hourly", "Part-Time", "Contr."],
+#     [6, 10, 15, 30, 60],
+# ]
+
+def count_iterable(i):
+    return sum(1 for element in i)
+
+# parameters = [
+#     ['provider', 'consumer'],
+#     ['label:All Workloads', 'label:Any(0.0.0.0/0)', 'label:role1'],
+#     ['service:All_Services', 'service:port22:sshd', 'virtual_service:bound', 'virtual_service:single_port', 'virtual_service:port_range','virtual_service:service''virtual_service:unbound'],
+# ]
+
+# labels = ['name', 'service', 'label_role', 'label_app', 'label_env', 'label_loc', 'pool_target', 'addr_pool']
+# parameters = [
+#     ['name'],
+#     ['service:existing_service', 'service:1_port', 'service:port_range', 'service:all_services'],
+#     ['label_role:empty', 'label_role:role1', 'label_role:unmanaged'],
+#     ['label_app:empty', 'label_app:role1', 'label_app:unmanaged'],
+#     ['label_env:empty', 'label_env:role1', 'label_env:unmanaged'],
+#     ['label_loc:empty', 'label_loc:role1', 'label_loc:unmanaged'],
+#     ['pool_target:host_only', 'pool_target:internal_bridge_netw'],
+#     ['addr_pool:ipv4_only', 'addr_pool:ipv6_only', 'addr_pool:ipv4+ipv6',
+#      'addr_pool:fqdn_only_managed', 'addr_pool:fqdn_only_unmanaged', 'addr_pool:fqdn_glob_match(*.ventest.com)'],
+# ]
+# print("Virtual Service GUI AllPairs Combinations:")
+
+def verify_datafile_exists(datafile):
+    """
+    Verify a datafile (string) exists on the OS and return true else exit program with an error
+
+    :param datafile: Filename to verify exists on OS
+    :return: True or else exits program with error
+    """
+
+    if os.path.exists(datafile):
+        return True
+    else:
+        print "Error: DATAFILE does not exist: %s" % datafile
+        exit()
+
+def get_help_msg(command):
+    """
+    Print full help message of click def <function>
+
+    Ex: print_help_msg(testcmd)
+
+    :param command: function that has the click command decorator and help option
+    :return: a string containting the @click.command() <function> help message
+    """
+    with click.Context(command) as ctx:
+        # click.echo(command.get_help(ctx))
+        return command.get_help(ctx)
+
+def print_examples():
+
+    labels = [ 'Year', 'Colors', 'Car']
+    parameters = [
+        ['2015', '2016', '2017', '2018'],
+        ['Red', 'Blue', 'Green', 'Gray', 'Brown'],
+        ['Honda', 'Toyota', 'Ford'],
+    ]
+
+    print "=== Python Input Data ==="
+    print "labels = \\"
+    pprint (labels)
+    print "parameters = \\"
+    pprint (parameters)
+    print
+
+    print "=== JSON Input Data ==="
+    data = {'labels': labels, 'parameters': parameters}
+    print json.dumps(data, indent=2, separators=(',', ': '))
+    print
+
+    print "=== YML Input Data: Style 1 ==="
+    print yaml.dump(data, default_flow_style=False, explicit_start=True)
+    print
+    print "=== YML Input Data: Style 2 ==="
+    print yaml.dump(data, line_break=True, default_flow_style=True, indent=2, explicit_start=True)
+    # print yaml.dump(data, line_break=True, default_style='"', default_flow_style=True, indent=2)
+    print
+
+# ---
+# Define command line options and parameters
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+# @click.command(cls=CatchAllExceptions, context_settings=CONTEXT_SETTINGS, options_metavar='[options]')
+@click.command(context_settings=CONTEXT_SETTINGS, options_metavar='[options]')
+@click.option('--csv_out',     '-c', is_flag=True, default=False,  help='Print Out Output in csv format only', metavar='<text>')
+@click.option('--examples',    '-e', is_flag=True, default=False,  help='Print Out Examples of the 3 input file types', metavar='<text>')
+@click.option('--nocnt',       '-n', is_flag=True, default=False,  help='Exclude count columns in allpairs output', metavar='<text>')
+@click.option('--rmlabels',    '-r', is_flag=True, default=False,  help='Exclude count columns in allpairs output', metavar='<text>')
+@click.option('--verbose',     '-v', is_flag=True, default=False,  help='Print Out Verbose Output', metavar='<text>')
+@click.help_option('--help',   '-h', help="This usage message")
+# @click.argument('datafile', type=click.Path(exists=True))
+@click.argument('datafile', default="./data/ap_datafile.py")
+
+def make_all_pairs(datafile, csv_out, examples, nocnt, rmlabels, verbose):
+    """\b
+allpairs - generate allpairs combinations from a python .py, .json, or .yml parameter file
+
+\b
+Desc: allpairs [Options] <file>.<py|yml|json>
+\b
+Examples:
+    allpairs -e ................ gives examples of input file syntax
+    allpairs -v ................ print out detailed info and use the file "./ap_datafile.py" as a default datafile
+    allpairs --csv_out <file>.py use the file "./ap_datafile.py" as a default datafile and output in csv format
+    allpairs --nocnt ........... do not include count in output column 1
+    allpairs --rmlabels ........ do not include labels in 1st row of output
+    allpairs <file>.py ......... use a python input datafile
+    allpairs <file>.yml ........ use a yaml input datafile
+    allpairs <file>.json ....... use a json input datafile
+Notes:
+\b
+  1. Must have "parameters" defined inside datafile which contains a list of lists
+  2. Must have "label"      defined inside datafile which contains a list of labels for the columns
+  3. Must have a datafile that has one of .py, .yml, or .json file extensions
+  4. Install program dependencies: pip install allpairspy pprint prettytable
+  5. For allpairs information, see:
+     a. Effectiveness: https://www.stickyminds.com/sites/default/files/presentation/file/2013/08STRER_T19.pdf
+     b. How to implement: https://www.softwaretestinghelp.com/what-is-pairwise-testing/
+\b
+"""
+    # ---
+    # These need to be set for execfile() to work correctly with globals
+    global parameters
+    global labels
+
+    # ---
+    # Print examples
+    if examples:
+        print_examples()
+        exit()
+
+    # ---
+    # Verify the datafile exists on the operating system
+    verify_datafile_exists(datafile=datafile)
+
+    # ---
+    # Verify the we have a correct datafile passed in as input
+    if ".py" in datafile:
+        if verbose: print "Note: Processing python datafile: %s" % datafile; print
+        # ---
+        # Execute parameters and labels from python file defining these two variables
+        try:
+            execfile(datafile, globals())
+        except Exception as e:
+            print "Error: Could not process python code correctly: %s" % e; print
+    elif ".yml" in datafile or ".yaml" in datafile:
+        print "Note: Processing yml datafile: %s" % datafile; print
+        with open(datafile, 'r') as f:
+            try:
+                data = yaml.load(f)
+                parameters = data['parameters']
+                labels = data['labels']
+            except yaml.YAMLError as exc:
+                print(exc)
+    elif ".json" in datafile:
+        print "Note: Processing json datafile: %s" % datafile; print
+        try:
+            with open(datafile) as f:
+                data = json.load(f)
+                parameters = data['parameters']
+                labels = data['labels']
+        except Exception as e:
+            print "Error: Could not process json code correctly: %s" % e; print
+    else:
+        print "Error: No file specified"
+        exit()
+
+    # ---
+    #
+    if verbose:
+        print "labels: "
+        pprint(labels)
+        print
+        print "parameters: "
+        pprint(parameters)
+        print
+
+    # ---
+    # Generate the allpairs from the parameters and put into a list of lists
+    ap_list = [pairs for pairs in AllPairs(parameters)]
+    if not rmlabels:
+        ap_list.insert(0, labels)  # put the labels at the front of the allpairs list
+
+    new_list = []
+    if not nocnt:
+        # ---
+        # Prepend the row count to the list for counting the rows
+        for i, pairs in enumerate(ap_list):
+            tmp_list = [str(i)] + pairs
+            new_list.append(tmp_list)
+    else:
+        new_list = ap_list
+
+    # ---
+    # Create the csv file and then pretty print it for the results of the allpairs so it is readable
+    buf  = StringIO()
+    outf = csv.writer(buf)
+    for row in new_list:
+        outf.writerow(row)
+    if csv_out:
+        print buf.getvalue()
+    else:
+        pretty_print_csv(csv_string=buf.getvalue())
+
+    # ---
+    # Now calculate the allpairs from the labels and the parameters
+    cnt_arr = [ len(row) for row in parameters]
+    all_combinations = 1
+    for cnt in cnt_arr:
+        all_combinations = all_combinations * cnt
+
+    # for i, pairs in enumerate(AllPairs(parameters)):
+    #     print "%2d : %s"  % (i+1, pairs)
+    #     # print("{:2d}: {}".format(i, pairs))
+    if verbose:
+        print
+        print "All Combinations: %8s %s" % (all_combinations, cnt_arr)
+        print "    vs"
+        print "All Pairs:        %8s"    % count_iterable(AllPairs(parameters))
+
+
+if __name__ == '__main__':
+    try:
+        make_all_pairs()
+    except Exception, err:
+        print "---"
+        print "Global Error: %s" % err
+        print "---"
+        exit(1)

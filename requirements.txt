@@ -1,0 +1,4 @@
+allpairspy
+prettytable
+pprint
+click
