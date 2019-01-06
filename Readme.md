@@ -5,10 +5,18 @@ Simple python tool to generate All-Pairs test combinations
 
 This is a tool to generate All-pairs test combinations from a json, python, or yaml input file using the allpairspy python library.
 
-## What Problem Does tcmd Solve?
+## What Problem Does allpairs Solve?
+The allpairspy library gives a very useful library for creating All-pairs combinations.
+This program extends the library by creating a command line utility to use the library by simply calling the utility with an input datafile for the label and parameters.  This allows one to simply generate allpairs combinations without knowing how to code in python.  The user just defines an input file for the labels and parameters in json, yml, or python format and calls the utility with the datafile as an argument to generate the combinations.  See the *Usage* section below on how to run.
 
 ## Description
 
+All-Pairs testing is a test technique for reducing test combinations.  
+See these links for an overview of All-Pairs testing:
+
+https://en.wikipedia.org/wiki/All-pairs_testing
+https://www.stickyminds.com/sites/default/files/presentation/file/2013/08STRER_T19.pdf
+https://www.softwaretestinghelp.com/what-is-pairwise-testing/
 
 
 ## Getting Started
@@ -25,32 +33,37 @@ git clone https://github.com/joebmt/allpairs.git
 
 ### Python Dependencies Prerequisites
 
-You will need to install the python click and python libraries:
+You will need to install the python click and python libraries before running the program:
 
 ```
-make install
+make install_req
 # or
 pip install -r requirements.txt
 ```
 
+### Install allpairs to /usr/local/bin
 
+You can install the allpairs program to /usr/local/bin/allpairs:
 
+```
+make install_allpairs
+```
 
 ## Framework Files
 
 The framework and description looks like this:
 
 ```
-├── License.md
-├── Makefile
-├── Readme.md
-├── allpairs
+├── License.md (apache license)
+├── Makefile   (makefile with helper commands)
+├── Readme.md  (this readme file)
+├── allpairs   (the primary program you execute to generate allpairs combinations from an input file)
 ├── data
-│   ├── ap_datafile.json
-│   ├── ap_datafile.py
-│   ├── ap_datafile_v1.yml
-│   └── ap_datafile_v2.yml
-└── requirements.txt
+│   ├── ap_datafile.json   (example input file in json format)
+│   ├── ap_datafile.py     (example input file in python format)
+│   ├── ap_datafile_v1.yml (example input file in yml extended format)
+│   └── ap_datafile_v2.yml (example input file in yml traditional format)
+└── requirements.txt       (pip install -r requirements.txt file to install dependencies)
 ```
 
 ## allpairs Usage Message
@@ -83,7 +96,6 @@ Usage: allpairs [options] [DATAFILE]
     5. For allpairs information, see:
        a. Effectiveness: https://www.stickyminds.com/sites/default/files/presentation/file/2013/08STRER_T19.pdf
        b. How to implement: https://www.softwaretestinghelp.com/what-is-pairwise-testing/
-
 
 Options:
   -c, --csv_out   Print Out Output in csv format only
