@@ -33,7 +33,13 @@ Install the framework by running git clone or downloading the zip file.
 git clone https://github.com/joebmt/allpairs.git
 ```
 
-### Python Dependencies Prerequisites
+### Program Dependencies Pre-requisites
+
+This program assumes you have python, make, and pip installed.
+If you do not have pip installed, you can install it here:
+- [Install Pip (python package manager](https://www.makeuseof.com/tag/install-pip-for-python/)
+
+### Python Dependencies Pre-requisites
 
 You will need to install the python click and python libraries before running the program:
 
