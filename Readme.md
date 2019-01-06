@@ -17,7 +17,7 @@ See these links for an overview and information about All-Pairs testing:
 
 https://en.wikipedia.org/wiki/All-pairs_testing
 https://www.stickyminds.com/sites/default/files/presentation/file/2013/08STRER_T19.pdf
-https://www.softwaretestinghelp.com/what-is-pairwise-testing/
+https://www.softwaretestinghelp.com/what-is-pairwise-testing
 http://www.pairwise.org/tools.asp
 
 ## Getting Started
