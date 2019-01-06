@@ -11,14 +11,14 @@ This program extends the library by creating a command line utility to use the l
 
 ## Description
 
-All-Pairs testing is a test technique for reducing test combinations.  It reduces test combinations by testing pairs of attributes/features instead of all combinations of features.  This allows test organizations to reduce cost, time, and man hours.  The effectiveness of the technique is discussed in the links below.  Used effectively, the technique can increase code coverage and find a higher percentage of defects than random testing. 
+All-Pairs testing is a test technique for reducing test combinations.  It reduces test combinations by testing pairs of attributes/features instead of all combinations of features.  This allows test organizations to reduce cost, time, and man hours.  The effectiveness of the technique is discussed in the links below.  Used effectively, the technique can increase code coverage and find a higher percentage of defects than other test techniques. 
 
 See these links for an overview and information about All-Pairs testing:
 
-https://en.wikipedia.org/wiki/All-pairs_testing
-https://www.stickyminds.com/sites/default/files/presentation/file/2013/08STRER_T19.pdf
-https://www.softwaretestinghelp.com/what-is-pairwise-testing
-http://www.pairwise.org/tools.asp
+- https://en.wikipedia.org/wiki/All-pairs_testing
+- https://www.stickyminds.com/sites/default/files/presentation/file/2013/08STRER_T19.pdf
+- https://www.softwaretestinghelp.com/what-is-pairwise-testing
+- http://www.pairwise.org/tools.asp
 
 ## Getting Started
 
