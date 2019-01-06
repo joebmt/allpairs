@@ -1,6 +1,5 @@
-# tcmd - Functional Test Command Program and Framework
-
-Simple Bash/Shell Unit and Functional Test Command Framework and Examples.
+# allpairs - Functional Test Command Program to generate All-Pair test combinations
+Simple python tool to generate All-Pairs test combinations
 
 ## Overview
 
