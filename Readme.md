@@ -158,9 +158,9 @@ parameters = \
  ['Honda', 'Toyota', 'Ford']]
 ```
 
-### Step 3: Generate an allpairs csv file or text table of the pairwise combinations using your datafile as input
+### Step 3: Generate an allpairs csv file or text table using your datafile as input
 
-The most used option is to generate an All-Pairs csv table.  Simply run the program with your data input file with the --csv_out option.
+The most used option is to generate an All-Pairs csv table.  Simply run the program with your data input file with the --csv_out option.  The command below uses the ap_datafile.py input file specifying the labels and parameters and the output is redirected to a file called `ap.csv`.
 
 ```
 allpairs --csv_out ./data/ap_datafile.py > ap.csv
@@ -507,7 +507,7 @@ parameters = \
 ```
 ## Authors
 
-* **Joe Orzehoski** - *Initial work* - [Linkedin Profile](http://www.linkedin.com/in/joeorzehoski)
+- **Joe Orzehoski** - *Initial work* - [Linkedin Profile](http://www.linkedin.com/in/joeorzehoski)
 
 ## License
 
@@ -515,5 +515,5 @@ This project is licensed under the Apache License - see the [License.md](License
 
 ## Acknowledgments
 
-* allpairspy
+- [allpairspy](https://github.com/thombashi/allpairspy)
 
