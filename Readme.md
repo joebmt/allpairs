@@ -63,7 +63,7 @@ make install_allpairs
 
 ### All Pairs Setup and Execution Procedure
 
-Follow the 3 steps below to setup a input datafile and execute these labels and parameters specified with the allpairs tool.
+Follow the 3 steps below to setup a input datafile and execute it with the `allpairs` tool.
 
 ### Step 1: Run allpairs --examples to see the input syntax in `python`, `json`, or `yml` format
 
