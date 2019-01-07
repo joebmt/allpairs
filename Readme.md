@@ -254,6 +254,7 @@ The framework and description looks like this:
 ├── data
 │   ├── ap_datafile.json   (example input file in json format)
 │   ├── ap_datafile.py     (example input file in python format)
+│   ├── ap_datafile_v2.py  (example input file for a 10 billion 10x10 parameters in python format)
 │   ├── ap_datafile_v1.yml (example input file in yml extended format)
 │   └── ap_datafile_v2.yml (example input file in yml traditional format)
 └── requirements.txt       (pip install -r requirements.txt file to install dependencies)
