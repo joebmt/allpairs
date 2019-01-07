@@ -41,7 +41,7 @@ git clone https://github.com/joebmt/allpairs.git
 
 This program assumes you have python, make, and pip installed.
 If you do not have pip installed, you can install it here:
-- [Install Pip (python package manager](https://www.makeuseof.com/tag/install-pip-for-python/)
+- [Install Pip (python package manager)](https://www.makeuseof.com/tag/install-pip-for-python/)
 
 ### Python Dependencies Pre-requisites
 
