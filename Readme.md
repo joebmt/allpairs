@@ -27,7 +27,7 @@ See the section [All-pairs Test Case Reduction Example](https://github.com/joebm
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development of shell scripts and testing purposes.
+The instructions below will install all the dependencies and demonstrate how to use the `allpairs` test tool to generate pairwise test combinations from an input file containing parameters and labels definitions.
 
 ### Installing
 
