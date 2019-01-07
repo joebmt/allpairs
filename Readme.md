@@ -23,7 +23,7 @@ See these links for an overview and information about All-Pairs testing:
 - [All-pairs Reference Site](http://www.pairwise.org/tools.asp)
 - [allpairspy Library used by allpairs utility](https://github.com/thombashi/allpairspy)
 
-See the section below how allpairs generates 172 test cases to cover 10 billion test combinations as an example of the reduction in test cases for a simple 10 by 10 combination table of parameters.
+See the section [All-pairs Test Case Reduction Example](https://github.com/joebmt/allpairs/blob/master/Readme.md#all-pairs-test-case-reduction-example) for how allpairs generates 172 test cases to cover 10 billion test combinations as an example of the reduction in test cases for a simple 10 by 10 combination table of parameters.
 
 ## Getting Started
 
