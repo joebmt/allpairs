@@ -39,10 +39,11 @@ Todo:
 """
 
 import os
+import re
 from pprint import pprint
 import click
 # import pandas
-from StringIO import StringIO
+from io import StringIO
 import csv
 import prettytable
 import json
@@ -50,6 +51,7 @@ import yaml
 # import sys
 # pprint(sys.path)
 from allpairspy import AllPairs
+import itertools
 
 
 def strip_surrounding_whitespace_from_csv_fh(infile=None):
@@ -124,21 +126,40 @@ def pretty_print_csv(csv_string=None, csv_file=None, csv_delimiter=",", html_out
 
     infile.close()
 
+    new_list = []
+    def process_row(row):
+        num, provider, port, consumer = row
+        pattern = re.compile("^ext")
+        if pattern.match(provider) and pattern.match(consumer):
+            print ("Note: %s Skipping: provider: %s; consumer: %s" % (num, provider, consumer))
+            return False
+        else:
+            return True
+
+
+        # new_list.append(row)
+
+
     for row in content:
-        # print "row: %s" % row
+
         if table is None:
             table = prettytable.PrettyTable(row)
         elif not row:
             pass  # skip
         else:
             table.add_row(row)
+            # if process_row(row):
+            #     table.add_row(row)
             # table[:] = [item for item in table if item != '']  # remove empty elements
+    # print("Row cnt: %s" % len(new_list))
 
     if print_csv:
         if html_output:
-            print table.get_html_string()
+            # print table.get_html_string()
+            output = table.get_html_string()
+            print(output)
         else:
-            print table
+            print(table)
 
     if html_output:
         return table.get_html_string()
@@ -186,7 +207,7 @@ def verify_datafile_exists(datafile):
     if os.path.exists(datafile):
         return True
     else:
-        print "Error: DATAFILE does not exist: %s" % datafile
+        print("Error: DATAFILE does not exist: %s" % datafile)
         exit()
 
 def get_help_msg(command):
@@ -211,25 +232,25 @@ def print_examples():
         ['Honda', 'Toyota', 'Ford'],
     ]
 
-    print "=== Python Input Data ==="
-    print "labels = \\"
+    print("=== Python Input Data ===")
+    print("labels = \\")
     pprint (labels)
-    print "parameters = \\"
+    print("parameters = \\")
     pprint (parameters)
-    print
+    print()
 
-    print "=== JSON Input Data ==="
+    print("=== JSON Input Data ===")
     data = {'labels': labels, 'parameters': parameters}
-    print json.dumps(data, indent=2, separators=(',', ': '))
-    print
+    print(json.dumps(data, indent=2, separators=(',', ': ')))
+    print()
 
-    print "=== YML Input Data: Style 1 ==="
-    print yaml.dump(data, default_flow_style=False, explicit_start=True)
-    print
-    print "=== YML Input Data: Style 2 ==="
-    print yaml.dump(data, line_break=True, default_flow_style=True, indent=2, explicit_start=True)
+    print("=== YML Input Data: Style 1 ===")
+    print(yaml.dump(data, default_flow_style=False, explicit_start=True))
+    print()
+    print("=== YML Input Data: Style 2 ===")
+    print(yaml.dump(data, line_break=True, default_flow_style=True, indent=2, explicit_start=True))
     # print yaml.dump(data, line_break=True, default_style='"', default_flow_style=True, indent=2)
-    print
+    print()
 
 # ---
 # Define command line options and parameters
@@ -239,13 +260,15 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.option('--csv_out',     '-c', is_flag=True, default=False,  help='Print Out Output in csv format only', metavar='<text>')
 @click.option('--examples',    '-e', is_flag=True, default=False,  help='Print Out Examples of the 3 input file types', metavar='<text>')
 @click.option('--nocnt',       '-n', is_flag=True, default=False,  help='Exclude count columns in allpairs output', metavar='<text>')
+@click.option('--paircnt',     '-p', is_flag=False, default=2,     help='Count <pcnt> pairs instead of default=2')
 @click.option('--rmlabels',    '-r', is_flag=True, default=False,  help='Exclude count columns in allpairs output', metavar='<text>')
 @click.option('--verbose',     '-v', is_flag=True, default=False,  help='Print Out Verbose Output', metavar='<text>')
+@click.option('--all_combos',  '-a', is_flag=True, default=False,  help='Print all combinations', metavar='<text>')
 @click.help_option('--help',   '-h', help="This usage message")
 # @click.argument('datafile', type=click.Path(exists=True))
 @click.argument('datafile', default="./data/ap_datafile.py")
 
-def make_all_pairs(datafile, csv_out, examples, nocnt, rmlabels, verbose):
+def make_all_pairs(datafile, csv_out, examples, paircnt, nocnt, rmlabels, verbose, all_combos):
     """\b
 allpairs - generate allpairs combinations from a python .py, .json, or .yml parameter file
 
@@ -255,12 +278,21 @@ Desc: allpairs [Options] <file>.<py|yml|json>
 Examples:
     allpairs -e ................ gives examples of input file syntax
     allpairs -v ................ print out detailed info and use the file "./ap_datafile.py" as a default datafile
-    allpairs --csv_out <file>.py use the file "./ap_datafile.py" as a default datafile and output in csv format
+    allpairs -p <pcnt> ......... print out <pcnt> pairs instead of just pairs (triples, quadruples, etc)
+    allpairs --csv_out ......... use the file "./ap_datafile.py" as a default datafile and output in csv format
+    allpairs --csv_out f.yml >out.csv
+                       ......... use the file "./f.yml" as the datafile and output in csv format to out.csv
     allpairs --nocnt ........... do not include count in output column 1
     allpairs --rmlabels ........ do not include labels in 1st row of output
     allpairs <file>.py ......... use a python input datafile
     allpairs <file>.yml ........ use a yaml input datafile
     allpairs <file>.json ....... use a json input datafile
+
+    allpairs -a <file>.yml ..... pretty table print out all possible combinations of datafile <file>.yml
+    allpairs -a -c <file>.yml .. print out all possible combinations in csv format of datafile <file>.yml
+
+    allpairs <file>.yml ........ pretty table print out all pairs combinations of datafile <file>.yml
+    allpairs -c <file>.yml ..... print out all pairs combinations in csv format of datafile <file>.yml
 Notes:
 \b
   1. Must have "parameters" defined inside datafile which contains a list of lists
@@ -290,71 +322,74 @@ Notes:
     # ---
     # Verify the we have a correct datafile passed in as input
     if ".py" in datafile:
-        if verbose: print "Note: Processing python datafile: %s" % datafile; print
+        if verbose: print("Note: Processing python datafile: %s" % datafile); print()
         # ---
         # Execute parameters and labels from python file defining these two variables
         try:
-            execfile(datafile, globals())
+            exec(compile(open(datafile, "rb").read(), datafile, 'exec'), globals())
         except Exception as e:
-            print "Error: Could not process python code correctly: %s" % e; print
+            print("Error: Could not process python code correctly: %s" % e); print()
     elif ".yml" in datafile or ".yaml" in datafile:
-        print "Note: Processing yml datafile: %s" % datafile; print
+        print("Note: Processing yml datafile: %s" % datafile); print()
         with open(datafile, 'r') as f:
             try:
-                data = yaml.load(f)
+                # data = yaml.load(f)
+                data = yaml.safe_load(f)
                 parameters = data['parameters']
                 labels = data['labels']
             except yaml.YAMLError as exc:
                 print(exc)
     elif ".json" in datafile:
-        print "Note: Processing json datafile: %s" % datafile; print
+        print("Note: Processing json datafile: %s" % datafile); print()
         try:
             with open(datafile) as f:
                 data = json.load(f)
                 parameters = data['parameters']
                 labels = data['labels']
         except Exception as e:
-            print "Error: Could not process json code correctly: %s" % e; print
+            print("Error: Could not process json code correctly: %s" % e); print()
     else:
-        print "Error: No file specified"
+        print("Error: No file specified")
         exit()
 
     # ---
     #
     if verbose:
-        print "labels: "
+        print("labels: ")
         pprint(labels)
-        print
-        print "parameters: "
+        print()
+        print("parameters: ")
         pprint(parameters)
-        print
+        print()
 
     # ---
     # Generate the allpairs from the parameters and put into a list of lists
-    ap_list = [pairs for pairs in AllPairs(parameters)]
+    # Note: n=2 (pairs); n=3 (triples); n=4 (quadruples)
+    if all_combos:
+        ap_list = get_all_combinations(parameters)
+    else:
+        ap_list = [pairs for pairs in AllPairs(parameters, n=paircnt)]
+    # ap_list = [pairs for pairs in AllPairs(parameters)]
     if not rmlabels:
         ap_list.insert(0, labels)  # put the labels at the front of the allpairs list
 
+    # Prepend the row number at the head of each row
     new_list = []
-    if not nocnt:
-        # ---
-        # Prepend the row count to the list for counting the rows
-        for i, pairs in enumerate(ap_list):
-            tmp_list = [str(i)] + pairs
-            new_list.append(tmp_list)
-    else:
+    if nocnt:
         new_list = ap_list
-
-    # ---
-    # Create the csv file and then pretty print it for the results of the allpairs so it is readable
-    buf  = StringIO()
-    outf = csv.writer(buf)
-    for row in new_list:
-        outf.writerow(row)
-    if csv_out:
-        print buf.getvalue()
     else:
-        pretty_print_csv(csv_string=buf.getvalue())
+        # ---
+        # Prepend the row count to the list for counting the rows "01" instead of "1"
+        cnt = 0
+        for i, pairs in enumerate(ap_list):
+            cnt = "{:02d}".format(i)
+            # print ("i: %d" % (i))
+            # tmp_list = [str(i)] + pairs
+            tmp_list = [str(cnt)] + pairs
+            new_list.append(tmp_list)
+
+    # Print out the list
+    print_data(new_list, csv_out=csv_out)
 
     # ---
     # Now calculate the allpairs from the labels and the parameters
@@ -367,17 +402,44 @@ Notes:
     #     print "%2d : %s"  % (i+1, pairs)
     #     # print("{:2d}: {}".format(i, pairs))
     if verbose:
-        print
-        print "All Combinations: %8s %s" % (all_combinations, cnt_arr)
-        print "    vs"
-        print "All Pairs:        %8s"    % count_iterable(AllPairs(parameters))
+        print()
+        print("All Combinations: %8s %s" % (all_combinations, cnt_arr))
+        print("    vs")
+        print("All Pairs:        %8s"    % count_iterable(AllPairs(parameters)))
 
+def print_data(mylist, csv_out=False):
+
+    buf = StringIO()
+    datawriter = csv.writer(buf)
+    # Ex:
+    # with open('employee_file.csv', mode='w') as employee_file:
+    #   employee_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    #
+    #   employee_writer.writerow(['John Smith', 'Accounting', 'November'])
+    for row in mylist:
+        datawriter.writerow(row)
+        # print(row)
+    if csv_out:
+        print(buf.getvalue())
+    else:
+        pretty_print_csv(csv_string=buf.getvalue())
+
+# https://stackoverflow.com/questions/3169825/generating-combinations-in-python
+def get_all_combinations(iterables):
+
+    # iterables = [ [1,2,3,4], [88,99], ['a','b'] ]
+    combos = []
+    for t in itertools.product(*iterables):
+        # t is a tuple, convert to a list for my pretty print routine
+        combos.append(list(t))
+    # pprint(combos)
+    return combos
 
 if __name__ == '__main__':
     try:
         make_all_pairs()
-    except Exception, err:
-        print "---"
-        print "Global Error: %s" % err
-        print "---"
+    except Exception as err:
+        print("---")
+        print("Global Error: %s" % err)
+        print("---")
         exit(1)
