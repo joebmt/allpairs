@@ -7,7 +7,7 @@ This is a tool to generate All-pairs test combinations from a `json`, `python`, 
 
 ## What Problem Does allpairs Solve?
 The [allpairspy](https://github.com/thombashi/allpairspy) library gives a very useful library for creating All-pairs combinations.
-This program extends the library by creating a command line utility called `allpairs` to use the library by simply calling the utility with an input datafile for the label and parameters.  This allows one to simply generate All-Pairs combinations without knowing how to code in python.  The user just defines an input file for the labels and parameters in `json`, `yml`, or `python` format and calls the utility `allpairs` with the datafile as an argument to generate the combinations.  See the [Usage](https://github.com/joebmt/allpairs/blob/master/Readme.md#allpairs-usage-message) section below on how to run.
+This program extends the library by creating a command line utility called `allpairs` to use the library by simply calling the utility with an input datafile for the label and parameters.  This allows one to simply generate All-Pairs (pairwise) combinations without knowing how to code in python.  The user just defines an input file for the labels and parameters in `json`, `yml`, or `python` format and calls the utility `allpairs` with the datafile as an argument to generate the combinations.  See the [Usage](https://github.com/joebmt/allpairs/blob/master/Readme.md#allpairs-usage-message) section below on how to run.
 
 ## Description
 
